@@ -20,40 +20,14 @@ public class TestCustomer {
     public static void main(String[] args) {
 
         CustomerDao customerDao = new CustomerDao();
-        /*
-        customerDao.retriveAllCustomers();
 
-        System.out.println("  ");
+        customerDao.retriveAllCustomers();
 
         customerDao.retriveCustomerById(594);
 
-        System.out.println("  ");
-
         customerDao.retriveCustomerByNamedQueryId(599);
 
-      
-    
-       
-     
-        
-        
-        System.out.println(" ");
-        
-        Customer canc = new Customer();
-        canc.setCustomerId(888);
-        customerDao.removeCustomer(canc);
-      
-        System.out.println(" ");
-        
-        customerDao.retriveAllCustomerFirstName();
-        
-        customerDao.orderByDescCustomer();
-        
-          System.out.println("  ");
-        
-
-
-        ///TIPO DATE 
+        /*
         Customer inser = new Customer(); ///
         inser.setCustomerId(888);
         inser.setStoreId(0);
@@ -62,34 +36,39 @@ public class TestCustomer {
         inser.setEmail("antonio.deluca@gmail.com");
         inser.setActivebool(true);
         inser.setActive(3);
-        inser.setCreateDate();
-        inser.setLastUpdate();
+        inser.setCreateDate();///
+        inser.setLastUpdate();///
         customerDao.insertCustomer(inser);
- 
-
-        Customer mod = new Customer();///
+       
+         
+        Customer mod = new Customer();////
         mod.setFirstName("Massimo");
         mod.setLastName("Grimaldi");
-        mod.setCustomerId(888);
+        mod.setEmail("massimo.grim@gmail.com");
+        mod.setCustomerId(345);
         customerDao.updateCustomer(mod);
         
+         */
+        Customer canc = new Customer();
+        canc.setCustomerId(888);
+        customerDao.removeCustomer(canc);
 
-        customerDao.infoCustomer(); ///
-*/
-        
-        
-        //DA VERIFICARE 
-        customerDao.CustomerWhere();
+        customerDao.retriveAllCustomerFirstName();
+
+        customerDao.orderByDescCustomer();
+
+        customerDao.customerWhere();
+
+        customerDao.criteriaCountGroupBy();
 
         customerDao.esempiVariJPQL();
 
-        customerDao.jpqlQueryAll();
-
         customerDao.esempiJpqldml();
-        
+
         customerDao.jpqlFiltri();
-        
+
         customerDao.aggregateAndSortingJpql();
+
     }
 
 }

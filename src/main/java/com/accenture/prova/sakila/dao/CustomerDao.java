@@ -5,7 +5,6 @@
  */
 package com.accenture.prova.sakila.dao;
 
-import ch.qos.logback.core.CoreConstants;
 import com.accenture.prova.sakila.model.Customer;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -41,138 +40,22 @@ public class CustomerDao {
         this.em = emf.createEntityManager();
     }
 
-    public void retriveAllCustomers() {
+    public void retriveAllCustomers() { //OK
         List<Customer> listCust = em.createNamedQuery("Customer.findAll", Customer.class).getResultList();
         listCust.stream().forEach(p -> System.out.println(":" + p.toString()));
 
     }
 
-    public void retriveCustomerById(Integer id) {
+    public void retriveCustomerById(Integer id) {//OK
         Customer custById = em.find(Customer.class, id);
         System.out.println("Customer:" + " " + custById.toString());
 
     }
 
-    public void retriveCustomerByNamedQueryId(Integer id) {
+    public void retriveCustomerByNamedQueryId(Integer id) {//OK
         em.createNamedQuery("Customer.findByCustomerId", Customer.class);
         Customer custByIdN = em.find(Customer.class, id);
         System.out.println("Customer:" + " " + custByIdN.toString());
-    }
-
-    public void retriveAllCustomerFirstName() {
-        em.getTransaction().begin();
-
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-
-        CriteriaQuery<Customer> cq = cb.createQuery(Customer.class);
-
-        Root<Customer> cust = cq.from(Customer.class);
-
-        cq.select(cust.get("firstName")); //se voglio più campi uso multiselect
-
-        CriteriaQuery<Customer> select = cq.select(cust);
-
-        TypedQuery<Customer> q = em.createQuery(select);
-
-        
-        
-        List<Customer> list = q.getResultList();
-
-        System.out.println("I nomi di tutti i customer sono :");
-
-        for (Customer c : list) {
-            System.out.println(c.getFirstName());
-
-        }
-
-        em.getTransaction().commit();
-        em.close();
-        emf.close();
-
-    }
-
-    public void orderByDescCustomer() {
-        em.getTransaction().begin();
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-
-        CriteriaQuery<Customer> cq = cb.createQuery(Customer.class);
-
-        Root<Customer> cust = cq.from(Customer.class);
-
-        cq.orderBy(cb.desc(cust.get("customerId"))); //ordina in modo decrescente 
-
-        CriteriaQuery<Customer> select = cq.select(cust);
-
-        TypedQuery<Customer> q = em.createQuery(select);
-
-        List<Customer> list = q.getResultList();
-
-        System.out.println("i custumer in ordine decrescente per id:");
-
-        for (Customer c : list) {
-
-            System.out.println(c.getCustomerId() + c.getFirstName() + c.getLastName());
-
-        }
-
-        em.getTransaction().commit();
-        em.close();
-        emf.close();
-
-    }
-
-    //ricerca tramite nome che inizia per a ed effettua una count 
-    public void infoCustomer() { ////AGGIUSTA
-
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-
-        CriteriaQuery<Customer> cq = cb.createQuery(Customer.class);
-
-        Root<Customer> cust = cq.from(Customer.class);
-
-        cq.multiselect(cust.get("lastName"), cb.count(cust).alias("numero di customer")).groupBy(cust.get("lastName"));
-
-        System.out.print("lastName");
-        System.out.println("\t Count");
-
-        /*          List<Object[]> list = em.createQuery(cq).getResultList();  
-        
-for(Object[] object : list){  
-    System.out.println(object[0] + " " + object[1]);  
-  
-}  
-
-        em.getTransaction().commit();
-        em.close();
-        emf.close();
-         */
-    }
-
-    public void CustomerWhere() { ///Verifica
-        em.getTransaction().begin();
-
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-
-        AbstractQuery<Customer> cq = cb.createQuery(Customer.class);
-
-        Root<Customer> cust = cq.from(Customer.class);
-
-        cq.where(cb.lessThan(cust.get("customerId"), 22));  //selezionare i customer con id <a 22
-
-        CriteriaQuery<Customer> select = ((CriteriaQuery<Customer>) cq).select(cust);
-
-        TypedQuery<Customer> tq = em.createQuery(select);
-
-        List<Customer> list = tq.getResultList();
-
-        System.out.println("Customer con id inferiore a 22");
-
-        for (Customer c : list) {
-            System.out.println(c.getCustomerId() + c.getFirstName() + c.getLastName());
-        }
-        em.getTransaction().commit();
-        em.close();
-        emf.close();
     }
 
     public void insertCustomer(Customer cust) { ///dato date 
@@ -184,7 +67,6 @@ for(Object[] object : list){
         } catch (IllegalStateException | TransactionRequiredException Iex) {
 
         } catch (Exception e) {
-            e.printStackTrace();
         } finally {
 
             em.getTransaction().commit();
@@ -210,7 +92,6 @@ for(Object[] object : list){
         } catch (IllegalStateException | TransactionRequiredException Iex) {
 
         } catch (Exception e) {
-            e.printStackTrace();
         } finally {
 
             em.getTransaction().commit();
@@ -237,7 +118,6 @@ for(Object[] object : list){
         } catch (IllegalStateException | TransactionRequiredException Iex) {
 
         } catch (Exception e) {
-            e.printStackTrace();
         } finally {
 
             em.getTransaction().commit();
@@ -248,66 +128,157 @@ for(Object[] object : list){
         }
     }
 
-    //esempi jpql
-    public void esempiVariJPQL() {
+    //Criteria API
+    public void retriveAllCustomerFirstName() { //OK
         em.getTransaction().begin();
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<Customer> cq = cb.createQuery(Customer.class);
+
+        Root<Customer> cust = cq.from(Customer.class);
+
+        cq.select(cust.get("firstName")); //se voglio più campi uso multiselect
+
+        CriteriaQuery<Customer> select = cq.select(cust);
+
+        TypedQuery<Customer> q = em.createQuery(select);
+
+        List<Customer> list = q.getResultList();
+
+        System.out.println("I nomi di tutti i customer sono :");
+
+        for (Customer c : list) {
+            System.out.println(c.getFirstName());
+
+        }
+
+        em.getTransaction().commit();
+        em.close();
+        emf.close();
+
+    }
+
+    public void orderByDescCustomer() { //OK    
+        em.getTransaction().begin();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<Customer> cq = cb.createQuery(Customer.class);
+
+        Root<Customer> cust = cq.from(Customer.class);//Vado alla radice della query
+
+        cq.orderBy(cb.desc(cust.get("customerId"))); //ordina in modo decrescente 
+
+        CriteriaQuery<Customer> select = cq.select(cust);
+
+        TypedQuery<Customer> q = em.createQuery(select);
+
+        List<Customer> list = q.getResultList();
+
+        System.out.println("i custumer in ordine decrescente per id:");
+
+        for (Customer c : list) {
+
+            System.out.println(c.getCustomerId() + c.getFirstName() + c.getLastName());
+
+        }
+
+        em.getTransaction().commit();
+        em.close();
+        emf.close();
+
+    }
+
+    public void customerWhere() { //OK
+        em.getTransaction().begin();
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        AbstractQuery<Customer> cq = cb.createQuery(Customer.class);
+
+        Root<Customer> cust = cq.from(Customer.class);
+
+        cq.where(cb.lessThan(cust.get("customerId"), 22));  //selezionare i customer con id <a 22
+
+        CriteriaQuery<Customer> select = ((CriteriaQuery<Customer>) cq).select(cust);
+
+        TypedQuery<Customer> tq = em.createQuery(select);
+
+        List<Customer> list = tq.getResultList();
+
+        System.out.println("Customer con id inferiore a 22");
+
+        for (Customer c : list) {
+            System.out.println(c.getCustomerId() + c.getFirstName() + c.getLastName());
+        }
+        em.getTransaction().commit();
+        em.close();
+        emf.close();
+    }
+
+    public void criteriaCountGroupBy() { //OK
+        //seleziona il numero di cognomi e raggruppali per tali 
+        em.getTransaction().begin();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+
+        Root<Customer> cust = cq.from(Customer.class); //imposto la radice della query
+
+        cq.multiselect(cust.get("lastName"), cb.count(cust)).groupBy(cust.get("lastName"));
+
+        System.out.print("Result:");
+
+        List<Object[]> list = em.createQuery(cq).getResultList();
+
+        for (Object[] object : list) {
+            System.out.println(object[0] + "     " + object[1]);
+
+        }
+
+        em.getTransaction().commit();
+        em.close();
+        emf.close();
+    }
+
+    //esempi jpql
+    public void esempiVariJPQL() { //OK
+        em.getTransaction().begin();
+
         //QUERY DINAMICA
         //1 metodo per eseguire un'istruzione jpql 
-        Query cq = em.createQuery("SELECT c.last_name FROM Customer c"); //tipo di query che restituisce una lista di cognomi
-        List<Customer> listLastName = cq.getResultList();
-        System.out.println("I cognomi dei Customer sono:");
+        Query cq = em.createQuery("SELECT c FROM Customer c");
 
-        for (Customer c : listLastName) { //itero lista
-            System.out.println(c);
+        List<Customer> list = (List<Customer>) cq.getResultList();
+
+        System.out.println("I cognomi dei Customer con query dinamica sono:" + list.toString());
+        //oppure itero la lista 
+        for (Customer c : list) {
+
+            System.out.println(c.getCustomerId() + c.getFirstName() + c.getLastName());
 
         }
 
         System.out.println("---------");
+
         //QUERY STATICA 
         //2 metodo per query denominate
         List<Customer> listLastN = em.createNamedQuery("Customer.findAllLastName", Customer.class).getResultList();
-        listLastN.stream().forEach(p -> System.out.println("Il risultato della query denominata è:" + " " + p.toString()));//itero lista
 
-        Customer index = listLastN.get(3);
-        System.out.println("il customer all'indice 3 è" + " " + index);
+        System.out.println("lista dei cognomi con query denominata" + listLastN.toString());
 
         System.out.println("---------");
 
         //3 query lista nomi e email 
-        TypedQuery<Customer> tp = em.createQuery("Customer.findAllFirstNameAndEmail", Customer.class);//mi restituisce una lista 
+        TypedQuery<Customer> tp = em.createNamedQuery("Customer.findAllFirstNameAndEmail", Customer.class);//mi restituisce una lista 
         List<Customer> listCust = tp.getResultList();
 
-        System.out.println("I cognomi dei Customer sono:");
-        for (Customer cust : listCust) {
-
-            System.out.println(cust);
-
-        }
+        System.out.println("lista dei nomi e delle email con query denominata:" + listCust.toString());
 
         int numList = listCust.size();
+        //Customer index = listCust.get(345);
         System.out.println("la dimensione della lista è di:" + " " + numList);
-
-        //query di modifica customer
-        em.getTransaction().commit();
-        em.close();
-        emf.close();
-
-    }
-
-    public void jpqlQueryAll() {
-        //query su più colonne , recupera tutti i custumer 
-        em.getTransaction().begin();
-        Query all = em.createQuery("SELECT c FROM customer c"); //ritorna una lista 
-
-        List<Customer> listCust = all.getResultList();
-
-        System.out.println("la lista di tutti i customer è:");
-
-        for (Customer list : listCust) {
-
-            System.out.println(list.getCustomerId() + list.getFirstName() + list.getLastName() + list.getEmail());
-
-        }
+        //System.out.println("indice 345:" + " " + index);
 
         em.getTransaction().commit();
         em.close();
@@ -315,13 +286,14 @@ for(Object[] object : list){
 
     }
 
-    public void esempiJpqldml() {
+    public void esempiJpqldml() { //OK
         //
         em.getTransaction().begin();
 
-        Query up = em.createQuery("update customer set first_name= 'Giacomo' where customer_id=352"); //modifica
-        Query del = em.createQuery("delete from customer where customer_id=999");
-
+        Query up = em.createQuery("update Customer set firstName= 'Giacomo' where customerId=352"); //modifica
+        System.out.println("aggiornamento effettuato" + up.toString());
+        Query del = em.createQuery("delete from Customer where customerId=999");//cancellazione
+        System.out.println("aggiornamento effettuato" + del.toString());
         del.executeUpdate();
         up.executeUpdate();
 
@@ -332,9 +304,10 @@ for(Object[] object : list){
 
     //seleziona i customer con id tra 300 e 345
     //seleziona i customer che hanno un nome che inizia per S
-    public void jpqlFiltri() {
+    public void jpqlFiltri() { //OK
         em.getTransaction().begin();
-        Query q = em.createQuery("SELECT c FROM Customer c WHERE c.customer_id between 340 and 345");
+
+        Query q = em.createQuery("SELECT c FROM Customer c WHERE c.customerId between 340 and 345");
 
         List<Customer> listF = q.getResultList();
 
@@ -345,7 +318,7 @@ for(Object[] object : list){
 
         }
 
-        Query q1 = em.createQuery("SELECT c FROM Customer c WHERE c.first_name like 'S%'");
+        Query q1 = em.createQuery("SELECT c FROM Customer c WHERE c.firstName like 'S%'");
 
         List<Customer> listF2 = q1.getResultList();
 
@@ -361,14 +334,14 @@ for(Object[] object : list){
         emf.close();
     }
 
-    public void aggregateAndSortingJpql() {
+    public void aggregateAndSortingJpql() {//OK
 
         em.getTransaction().begin();
 
         Query count = em.createQuery("SELECT count(c) FROM Customer c"); //ottengo un solo risultato
         System.out.println("Il numero dei customer è:" + count.getSingleResult());
 
-        Query order = em.createQuery("SELECT c FROM Customer c order by c.customer_id desc ");
+        Query order = em.createQuery("SELECT c FROM Customer c order by c.customerId desc ");
         List<Customer> list = order.getResultList();
         System.out.println("I customer ordinati in modo decrescente:");
         for (Customer c : list) {

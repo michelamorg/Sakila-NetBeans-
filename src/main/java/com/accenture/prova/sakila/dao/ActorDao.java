@@ -17,7 +17,6 @@ import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TransactionRequiredException;
 import lombok.Data;
 import org.apache.log4j.Logger;
-import org.omg.CORBA.TRANSACTION_MODE;
 import org.postgresql.core.TransactionState;
 
 /**
